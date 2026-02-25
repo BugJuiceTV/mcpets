@@ -106,6 +106,8 @@ public class GlobalConfig extends AbstractConfig {
     private boolean fastMount;
     @Getter
     private boolean disableFastMountWhileHoldingSignalStick;
+    @Getter
+    private boolean spawnPetAfterServerRestart;
 
     @Getter
     @Setter
@@ -208,6 +210,8 @@ public class GlobalConfig extends AbstractConfig {
             getConfig().set("FastMount", false);
         if  (getConfig().get("DisableFastMountWhileHoldingSignalStick") == null)
             getConfig().set("DisableFastMountWhileHoldingSignalStick", false);
+        if (getConfig().get("SpawnPetAfterServerRestart") == null)
+            getConfig().set("SpawnPetAfterServerRestart", true);
 
         save();
         reload();
@@ -277,6 +281,7 @@ public class GlobalConfig extends AbstractConfig {
 
         fastMount = getConfig().getBoolean("FastMount");
         disableFastMountWhileHoldingSignalStick = getConfig().getBoolean("DisableFastMountWhileHoldingSignalStick");
+        spawnPetAfterServerRestart = getConfig().getBoolean("SpawnPetAfterServerRestart");
     }
 
     public boolean hasBlackListedWorld(String worldName) {

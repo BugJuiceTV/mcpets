@@ -724,6 +724,12 @@ public class Pet {
         // Add the pet to the active list of pets for the given owner
         activePets.put(owner, this);
 
+        if (GlobalConfig.getInstance().isSpawnPetAfterServerRestart()) {
+            PlayerData pd = PlayerData.get(owner);
+            pd.setLastActivePet(this.getId());
+            pd.save();
+        }
+
         // Load the player data for the pet
         PlayerData pd = PlayerData.get(owner);
         // Fetch the saved name
@@ -839,7 +845,7 @@ public class Pet {
                         (distance < GlobalConfig.getInstance().getDistanceTeleport() || tamingProgress < 1)) {
                     // If the pet is too far but not far enough to be teleported, then it follows up the owner
                     // Except if the following is disabled
-                    // * Note : if the taming is not completed then the pet can not be teleported to the owner
+                    // * Note : if the taming of the pet is not completed then the pet can not be teleported to the owner
                     if (!followOwner)
                         return;
                     AbstractLocation aloc = new AbstractLocation(activeMob.getEntity().getWorld(), petLocation.getX(), petLocation.getY(), petLocation.getZ());
@@ -936,11 +942,29 @@ public class Pet {
             }
 
             activePets.remove(owner);
+
+            if (GlobalConfig.getInstance().isSpawnPetAfterServerRestart()) {
+                if (reason == PetDespawnReason.REVOKE || reason == PetDespawnReason.DISMOUNT || reason == PetDespawnReason.UNKNOWN) {
+                    PlayerData pd = PlayerData.get(owner);
+                    pd.setLastActivePet("");
+                    pd.save();
+                }
+            }
+
             return true;
         }
 
         Debugger.send("§cActive mob was not found, so it could not be despawned.");
         activePets.remove(owner);
+
+        if (GlobalConfig.getInstance().isSpawnPetAfterServerRestart()) {
+            if (reason == PetDespawnReason.REVOKE || reason == PetDespawnReason.DISMOUNT || reason == PetDespawnReason.UNKNOWN) {
+                PlayerData pd = PlayerData.get(owner);
+                pd.setLastActivePet("");
+                pd.save();
+            }
+        }
+
         return false;
     }
 
